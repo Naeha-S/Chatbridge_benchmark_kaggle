@@ -18,6 +18,7 @@ REQUIRED_FIELDS = {
     "difficulty_level",
     "evaluation_criteria",
     "scenario_types",
+    "scenario_family_id",
 }
 
 
@@ -56,6 +57,10 @@ def validate_case(case: dict[str, Any]) -> list[str]:
     if not isinstance(case.get("expected_continuity_state"), dict):
         errors.append("expected_continuity_state must be a dict")
 
+
+    if not isinstance(case.get("scenario_family_id"), str) or not case.get("scenario_family_id"):
+        errors.append("scenario_family_id must be a non-empty string")
+
     return errors
 
 
@@ -66,3 +71,10 @@ def build_model_input(case: dict[str, Any]) -> dict[str, Any]:
         "source_conversation": case["source_conversation"],
         "handoff_task": case["handoff_task"],
     }
+
+
+
+
+
+
+

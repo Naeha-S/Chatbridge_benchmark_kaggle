@@ -103,3 +103,35 @@ pytest
 ```
 
 Each script writes machine-readable JSON including seeds/configuration and reports limitations/failures where applicable.
+
+## Release setup and review workflow
+
+Create a clean environment and install the project with its test dependencies:
+
+```bash
+py -m venv .venv
+.venv\Scripts\python -m pip install -e ".[dev]"
+.venv\Scripts\python -m pytest
+```
+
+The documented commands work after installation without setting `PYTHONPATH`:
+
+```bash
+.venv\Scripts\python scripts/generate_dataset.py --output data/generated/continuitybench_v1.jsonl --count 84 --seed 7
+.venv\Scripts\python scripts/evaluate_retrieval.py --dataset data/generated/continuitybench_v1.jsonl --output reports/generated/retrieval_metrics.json --k 5
+.venv\Scripts\python scripts/export_review.py --dataset data/generated/continuitybench_v1.jsonl --output reports/generated/review.jsonl --summary-output reports/generated/review_summary.json
+```
+
+Cases are split by the stable `scenario_family_id`; a family is never divided between train, dev, and test. Assignment is deterministic for a seed. If fewer than three families exist, one or more requested splits may be empty rather than leaking a family. Dense retrieval is offline by default and uses a deterministic hash fallback; install `.[dense]` only when the optional sentence-transformers model is available locally.
+
+Review JSONL files are evaluator-only and must never be passed to a model. New records start as `unreviewed`; reviewers may set `accepted`, `corrected`, or `rejected`, with an issue category and correction notes. Only a zero-unreviewed summary is considered semantically reviewed, and even accepted cases require retained review evidence.
+
+## Human review artifacts
+
+Create a readable packet and editable workbook for the generated dataset:
+
+```bash
+py scripts/create_human_review_artifacts.py --dataset data/generated/continuitybench_v1.jsonl --markdown reports/generated/human_review_packet.md --xlsx reports/generated/human_review_workbook.xlsx
+```
+
+The workbook's `Case Review` sheet contains one row per case, source conversation, handoff task, gold state, provenance, editable checks, status, issue category, and correction notes. The `Summary` sheet counts review statuses. All generated cases start as `unreviewed`; automated checks must not be treated as human decisions.

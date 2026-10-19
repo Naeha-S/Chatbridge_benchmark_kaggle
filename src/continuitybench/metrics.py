@@ -5,14 +5,15 @@ from typing import Any
 
 
 def retrieval_recall_at_k(required_facts: list[str], retrieved_docs: list[str]) -> float:
-    if not required_facts:
+    expected = set(required_facts)
+    if not expected:
         return 1.0
     hits = 0
     joined = " ".join(retrieved_docs).lower()
-    for fact in required_facts:
+    for fact in expected:
         if fact.lower() in joined:
             hits += 1
-    return hits / len(required_facts)
+    return hits / len(expected)
 
 
 def fact_preservation(predicted_state: dict[str, Any], expected_state: dict[str, Any]) -> float:
@@ -55,3 +56,5 @@ def timed_retrieval(retriever, query: str, k: int) -> tuple[list[tuple[int, str,
     results = retriever.retrieve(query, k=k)
     latency_ms = (time.perf_counter() - start) * 1000.0
     return results, latency_ms
+
+

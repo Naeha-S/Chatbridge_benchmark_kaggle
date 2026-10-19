@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import re
+import hashlib
 from collections import Counter
 from typing import Sequence
 
@@ -89,7 +90,8 @@ class DenseRetriever(BaseRetriever):
     def _hash_vector(self, text: str) -> list[float]:
         vec = [0.0] * self.dim
         for token in _tokenize(text):
-            idx = hash(token) % self.dim
+            digest = hashlib.sha256(token.encode('utf-8')).digest()
+            idx = int.from_bytes(digest[:8], "big") % self.dim
             vec[idx] += 1.0
         norm = math.sqrt(sum(v * v for v in vec)) or 1.0
         return [v / norm for v in vec]
@@ -141,3 +143,5 @@ class HybridRetriever(BaseRetriever):
             scores[i] = self.lexical_weight * lexical.get(i, 0.0) + (1 - self.lexical_weight) * dense.get(i, 0.0)
         ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:k]
         return [(i, self.documents[i], score) for i, score in ranked]
+
+

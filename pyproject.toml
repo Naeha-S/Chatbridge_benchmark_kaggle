@@ -13,15 +13,23 @@ authors = [{name = "ContinuityBench Contributors"}]
 dependencies = []
 
 [project.optional-dependencies]
-dense = ["sentence-transformers>=3.0.0"]
+dense = ["sentence-transformers>=3.0"]
 dev = ["pytest>=8.0"]
 
+[project.scripts]
+continuitybench-generate = "scripts.generate_dataset:main"
+continuitybench-evaluate = "scripts.evaluate_retrieval:main"
+continuitybench-export-review = "scripts.export_review:main"
+
 [tool.pytest.ini_options]
-pythonpath = ["src"]
-addopts = "-q"
+addopts = "-q -p no:cacheprovider"
+testpaths = ["tests"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+
+
