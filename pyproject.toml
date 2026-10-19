@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "continuitybench"
+version = "0.1.0"
+description = "Reproducible benchmark scaffold for cross-model conversational continuity"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "ContinuityBench Contributors"}]
+dependencies = []
+
+[project.optional-dependencies]
+dense = ["sentence-transformers>=3.0.0"]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
