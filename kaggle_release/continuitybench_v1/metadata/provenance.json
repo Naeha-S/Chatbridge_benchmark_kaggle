@@ -1,0 +1,32 @@
+{
+  "package_version": "continuitybench_v1_kaggle_20261021",
+  "dataset_version": "continuitybench_v1",
+  "case_count": 84,
+  "source_dataset": "data/generated/continuitybench_v1.jsonl",
+  "source_result": "reports/generated/current/cross_model_handoff_ollama_llama31_qwen3_source_retrieval_audit_20261020_full.json",
+  "source_analysis": "reports/generated/current/analysis_20261021",
+  "model_a": "Ollama llama3.1:8b",
+  "model_b": "Ollama qwen3:4b",
+  "backend": "local Ollama",
+  "condition_names": [
+    "transfer",
+    "no_transfer",
+    "source_retrieval"
+  ],
+  "source_retrieval": "deterministic lexical BM25, k=5, positive-score turns only",
+  "license_status": "Not established in source repository; owner must confirm redistribution license before publication.",
+  "sensitive_data_review": "Synthetic-looking names, references, and identifiers are present; owner should confirm no real personal or confidential data before public upload.",
+  "files": {
+    "analysis\\aggregate_metrics.csv": "397d9adf2887b2837f52dd89841f863ab6e16733a1b6097a87ee7b9350e59185",
+    "analysis\\analysis_report.md": "efeb92d080eafb80f2ab5b450663a2901f0022465ce5edf9f0b3bff7fe0a8a1a",
+    "analysis\\category_breakdown.csv": "4f50f43bd86ad0d87723d366124e42c12bb0356be008b50283590b6d194ccaa4",
+    "analysis\\difficulty_breakdown.csv": "f3654ae5cfc24f7f74c76c631e9be1e9a0d5b0441096f15c60d3614ad8a50266",
+    "analysis\\paired_comparisons.csv": "7c89676ac3020a785101484a4fbcfeb3ec5906bbcec113cf205d00c706e8b9d5",
+    "analysis\\validation_report.md": "90035270bf84b2be8e4487a5d5224b93927268dfef40f26ec0fb7e25945e471b",
+    "data\\continuitybench_v1.jsonl": "230ba9c6f62f7b87f8da66d9fbc64cf4fbd547f60d2ee824e41dbe0fe81c58b5",
+    "data\\data_dictionary.md": "b2e4126947e3c766e5e3d78b0be286b20e73c365fa9425b9425518deef4e5d3a",
+    "data\\schema.md": "b3f5284ba73f393b891710f47590960e2d209ed1e1d06fd5cf22e46468c6fbab",
+    "metadata\\source_experiment_manifest.json": "5d7a72d316a1cf1ab3d0fed1e05c938323d80057795deb8cc00b872a62e24ca7",
+    "results\\per_case_results.csv": "ee8e20444254c4d5a291378fe3ed8d5ce59b8da966fd7841333e0390cd97036e"
+  }
+}

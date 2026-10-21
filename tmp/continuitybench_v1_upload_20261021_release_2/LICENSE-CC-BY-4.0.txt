@@ -1,0 +1,14 @@
+﻿Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Except where otherwise noted, the following original ContinuityBench v1 materials in this package are licensed under the Creative Commons Attribution 4.0 International License:
+
+- The 84 benchmark cases and their gold labels.
+- The schema and data dictionary/documentation.
+- The original aggregate analysis and per-case metric results.
+
+You are free to share and adapt these materials for any purpose, provided that you give appropriate credit, provide a link to the license, and indicate if changes were made.
+
+License text and legal code:
+https://creativecommons.org/licenses/by/4.0/
+
+This notice does not license repository source code, raw Llama 3.1 or Qwen3 model responses, detailed retrieval evidence, diagnostic manifests, human-review history, reconciliation artifacts, or third-party material. Repository source code remains governed by the root MIT license. No raw model responses or detailed retrieval evidence are included in this package.

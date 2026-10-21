@@ -1,0 +1,19 @@
+{
+  "package_type": "temporary_kaggle_upload",
+  "case_count": 84,
+  "dataset_source": "data\\generated\\continuitybench_v1.jsonl",
+  "result_source": "reports\\generated\\current\\analysis_20261021\\per_case_analysis.csv",
+  "diagnostic_manifest_excluded": true,
+  "license_status": "CC BY 4.0 authorized by owner for the scoped original benchmark materials listed in LICENSE-CC-BY-4.0.txt; owner-provided authorization is not independent legal verification. Root MIT license remains limited to repository code.",
+  "owner_provided_provenance": {
+    "statement": "Owner confirms all 84 benchmark conversations were generated specifically for ContinuityBench using ChatGPT/Codex and manually reviewed by the owner; to the owners knowledge, no third-party conversations or copied external material were used.",
+    "basis": "Owner-provided confirmation; not independently verified.",
+    "synthetic_provenance_and_non_confidentiality": "Requires owner confirmation and is not independently verified."
+  },
+  "human_review_status": "Owner reports all 84 cases manually reviewed; review history is excluded from the minimal public package.",
+  "license_file_required_blocker": false,
+  "publication_blockers": [
+    "Confirm redistribution terms for raw generated Llama 3.1 and Qwen3 outputs if they are ever released; they are excluded from this package.",
+    "Confirm that Kaggle metadata uses CC BY 4.0 for the scoped original benchmark materials and does not imply coverage of excluded materials."
+  ]
+}

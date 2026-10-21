@@ -9,8 +9,8 @@ from continuitybench.schema import build_model_input
 from continuitybench.quality import split_dataset
 
 DATA = Path("data/generated/continuitybench_v1.jsonl")
-OUT_JSON = Path("reports/generated/release_audit.json")
-OUT_MD = Path("reports/generated/release_audit.md")
+OUT_JSON = Path("reports/generated/current/release_audit.json")
+OUT_MD = Path("reports/generated/current/release_audit.md")
 K = 5
 
 def load(): return [json.loads(x) for x in DATA.read_text(encoding="utf-8").splitlines() if x.strip()]
@@ -47,3 +47,4 @@ def main():
     OUT_MD.write_text("\n".join(lines),encoding="utf-8")
     print(f"Audit JSON -> {OUT_JSON}\nAudit Markdown -> {OUT_MD}")
 if __name__ == "__main__": main()
+

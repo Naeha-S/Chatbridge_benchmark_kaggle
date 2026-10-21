@@ -11,7 +11,7 @@ ContinuityBench is a reproducible benchmark scaffold for evaluating conversation
 - `tests/` focused unit tests.
 - `notebooks/` exploratory analysis workspace.
 - `scripts/` command-line dataset generation and baseline evaluation scripts.
-- `reports/` machine-readable metrics and QA summaries (generated into `reports/generated/`).
+- `reports/` machine-readable metrics and QA summaries (generated into `reports/generated/current/`).
 
 ## Architecture (initial)
 
@@ -98,7 +98,7 @@ Schema validity alone is **not** treated as semantic validity. Sample review is 
 
 ```bash
 python scripts/generate_dataset.py --output data/generated/continuitybench_v1.jsonl --count 84 --seed 7
-python scripts/evaluate_retrieval.py --dataset data/generated/continuitybench_v1.jsonl --output reports/generated/retrieval_metrics.json --k 5
+python scripts/evaluate_retrieval.py --dataset data/generated/continuitybench_v1.jsonl --output reports/generated/current/retrieval_metrics.json --k 5
 pytest
 ```
 
@@ -118,8 +118,8 @@ The documented commands work after installation without setting `PYTHONPATH`:
 
 ```bash
 .venv\Scripts\python scripts/generate_dataset.py --output data/generated/continuitybench_v1.jsonl --count 84 --seed 7
-.venv\Scripts\python scripts/evaluate_retrieval.py --dataset data/generated/continuitybench_v1.jsonl --output reports/generated/retrieval_metrics.json --k 5
-.venv\Scripts\python scripts/export_review.py --dataset data/generated/continuitybench_v1.jsonl --output reports/generated/review.jsonl --summary-output reports/generated/review_summary.json
+.venv\Scripts\python scripts/evaluate_retrieval.py --dataset data/generated/continuitybench_v1.jsonl --output reports/generated/current/retrieval_metrics.json --k 5
+.venv\Scripts\python scripts/export_review.py --dataset data/generated/continuitybench_v1.jsonl --output reports/generated/review/review.jsonl --summary-output reports/generated/review/review_summary.json
 ```
 
 Cases are split by the stable `scenario_family_id`; a family is never divided between train, dev, and test. Assignment is deterministic for a seed. If fewer than three families exist, one or more requested splits may be empty rather than leaking a family. Dense retrieval is offline by default and uses a deterministic hash fallback; install `.[dense]` only when the optional sentence-transformers model is available locally.
@@ -131,7 +131,72 @@ Review JSONL files are evaluator-only and must never be passed to a model. New r
 Create a readable packet and editable workbook for the generated dataset:
 
 ```bash
-py scripts/create_human_review_artifacts.py --dataset data/generated/continuitybench_v1.jsonl --markdown reports/generated/human_review_packet.md --xlsx reports/generated/human_review_workbook.xlsx
+py scripts/create_human_review_artifacts.py --dataset data/generated/continuitybench_v1.jsonl --markdown reports/generated/review/human_review_packet.md --xlsx reports/generated/review/human_review_workbook.xlsx
 ```
 
 The workbook's `Case Review` sheet contains one row per case, source conversation, handoff task, gold state, provenance, editable checks, status, issue category, and correction notes. The `Summary` sheet counts review statuses. All generated cases start as `unreviewed`; automated checks must not be treated as human decisions.
+
+
+## Local Ollama cross-model handoff
+
+The primary runner supports an isolated local Ollama backend for the two-stage condition:
+
+- Source artifact model: `llama3.1:8b`
+- Target response model: `qwen3:4b`
+- Endpoint: `http://localhost:11434`
+- Output: `reports/generated/current/cross_model_handoff_ollama_llama31_qwen3.json`
+
+Configure with environment variables or `.env` (never commit real credentials; Ollama is local):
+
+```text
+CB_BACKEND=ollama
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_SOURCE_MODEL=llama3.1:8b
+OLLAMA_TARGET_MODEL=qwen3:4b
+CB_RETRIES=2
+```
+
+Verify Ollama and models in PowerShell:
+
+```powershell
+Invoke-RestMethod http://localhost:11434/api/tags
+(Invoke-RestMethod http://localhost:11434/api/tags).models.name
+```
+
+Run the first smoke test only after verification:
+
+```powershell
+py scripts/cross_model_handoff.py --backend ollama --case-id CB-00000 --retries 2
+```
+
+After inspecting the smoke-test output, run all 84 cases:
+
+```powershell
+py scripts/cross_model_handoff.py --backend ollama --retries 2
+```
+
+The runner persists after each case and resumes by skipping case IDs already present in the Ollama output. Use `--limit N` for a small batch. A valid score requires a completed comparison; connection, model-not-found, HTTP, empty-response, and JSON failures are recorded separately and are not scores. The existing Gemini/Hugging Face output is not reused or mixed with the Ollama output.
+
+### Source-retrieval Ollama condition
+
+For the corrected future experiment, use `--backend ollama_retrieval`. It ranks the complete source conversation with the existing deterministic BM25 implementation using the handoff task as the query. It selects up to five turns with score greater than zero, preserves `turn-{index}` provenance when source records lack explicit IDs, and formats selected turns in ranked order. Ties are stable by original turn index. Empty/no-match retrieval produces an explicit empty context. This is lexical BM25 retrieval, not semantic retrieval.
+
+The corrected condition uses a separate output and does not overwrite the prior prefix-condition smoke result:
+
+```powershell
+py scripts/cross_model_handoff.py --backend ollama_retrieval --case-id CB-00000 --retries 2
+py scripts/cross_model_handoff.py --backend ollama_retrieval --retries 2
+```
+
+Output: `reports/generated/current/cross_model_handoff_ollama_llama31_qwen3_source_retrieval.json`.
+
+### Fresh auditable retrieval runs
+
+To avoid resuming from either prior Ollama result, pass a new explicit `--output` path:
+
+```powershell
+py scripts/cross_model_handoff.py --backend ollama_retrieval --case-id CB-00000 --retries 2 --output reports/generated/current/cross_model_handoff_ollama_llama31_qwen3_source_retrieval_audit_20261020_smoke.json
+py scripts/cross_model_handoff.py --backend ollama_retrieval --retries 2 --output reports/generated/current/cross_model_handoff_ollama_llama31_qwen3_source_retrieval_audit_20261020_full.json
+```
+
+Each auditable retrieval result stores `source_retrieval_evidence` separately from metrics, including selected turn metadata and the exact formatted target context.

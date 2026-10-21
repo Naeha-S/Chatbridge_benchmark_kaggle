@@ -1,0 +1,13 @@
+comparison,metric,n,mean_difference,median_difference,favorable_to_first,favorable_to_second,ties,direction
+transfer_vs_no_transfer,fact_preservation,84,0.1349206349206349,0.0,25,0,59,higher_better
+transfer_vs_no_transfer,stale_fact_error_rate,84,0.16666666666666666,0.0,0,14,70,lower_better
+transfer_vs_no_transfer,contradiction_rate,84,0.0,0.0,0,0,84,lower_better
+transfer_vs_no_transfer,answer_required_fact_coverage,84,0.02976190476190476,0.0,5,0,79,higher_better
+source_retrieval_vs_no_transfer,fact_preservation,84,0.017857142857142856,0.0,3,0,81,higher_better
+source_retrieval_vs_no_transfer,stale_fact_error_rate,84,0.023809523809523808,0.0,0,2,82,lower_better
+source_retrieval_vs_no_transfer,contradiction_rate,84,0.0,0.0,0,0,84,lower_better
+source_retrieval_vs_no_transfer,answer_required_fact_coverage,84,0.011904761904761904,0.0,2,0,82,higher_better
+transfer_vs_source_retrieval,fact_preservation,84,0.11706349206349206,0.0,23,1,60,higher_better
+transfer_vs_source_retrieval,stale_fact_error_rate,84,0.14285714285714285,0.0,0,12,72,lower_better
+transfer_vs_source_retrieval,contradiction_rate,84,0.0,0.0,0,0,84,lower_better
+transfer_vs_source_retrieval,answer_required_fact_coverage,84,0.017857142857142856,0.0,4,1,79,higher_better

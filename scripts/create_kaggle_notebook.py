@@ -1,0 +1,24 @@
+﻿from pathlib import Path
+import json
+root=Path('kaggle_release/continuitybench_v1')
+def md(text): return {'cell_type':'markdown','metadata':{},'source':text.splitlines(True)}
+def code(text): return {'cell_type':'code','execution_count':None,'metadata':{},'outputs':[],'source':text.splitlines(True)}
+nb={'cells':[
+md('# ContinuityBench v1 offline analysis\n\nThis notebook analyzes the frozen Kaggle package and supplied local-run results. It does not call Ollama, use API credentials, or perform inference.'),
+code("from pathlib import Path\nimport json, os\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n# Set this to the Kaggle dataset mount when running on Kaggle.\nINPUT_DIR = Path(os.environ.get('CONTINUITYBENCH_INPUT_DIR', '/kaggle/input/continuitybench-v1'))\nif not INPUT_DIR.exists():\n    INPUT_DIR = Path('.')\nprint('Input directory:', INPUT_DIR.resolve())"),
+md('## Load published files'),
+code("dataset_path = INPUT_DIR / 'data' / 'continuitybench_v1.jsonl'\nper_case_path = INPUT_DIR / 'results' / 'per_case_results.csv'\naggregate_path = INPUT_DIR / 'analysis' / 'aggregate_metrics.csv'\ncategory_path = INPUT_DIR / 'analysis' / 'category_breakdown.csv'\ndifficulty_path = INPUT_DIR / 'analysis' / 'difficulty_breakdown.csv'\n\ncases = [json.loads(line) for line in dataset_path.read_text(encoding='utf-8').splitlines() if line.strip()]\nper_case = pd.read_csv(per_case_path)\naggregate = pd.read_csv(aggregate_path)\ncategory = pd.read_csv(category_path)\ndifficulty = pd.read_csv(difficulty_path)\nprint('Cases:', len(cases), 'Per-case results:', len(per_case))"),
+md('## Dimensions and schema'),
+code("print('Case keys:')\nprint(sorted(cases[0].keys()))\nprint('Conversation lengths:', pd.Series([len(c['source_conversation']) for c in cases]).describe())\nprint(per_case.head(3).to_string(index=False))"),
+md('## Validate IDs and completeness'),
+code("dataset_ids = {c['case_id'] for c in cases}\nresult_ids = set(per_case['case_id'])\nprint('Dataset IDs:', len(dataset_ids))\nprint('Result IDs:', len(result_ids))\nprint('Missing:', sorted(dataset_ids - result_ids))\nprint('Unexpected:', sorted(result_ids - dataset_ids))\nprint('Duplicate result rows:', int(per_case['case_id'].duplicated().sum()))"),
+md('## Aggregate metrics'),
+code("display(aggregate)") ,
+md('## Condition comparison'),
+code("mean_table = aggregate.pivot(index='metric', columns='condition', values='mean')\ndisplay(mean_table)\nmean_table.plot(kind='bar', figsize=(11,5), title='Mean metric values by condition')\nplt.xticks(rotation=25, ha='right'); plt.tight_layout(); plt.show()"),
+md('## Category and difficulty breakdowns'),
+code("display(category.head(30))\ndisplay(difficulty)\nfor frame, title in [(category, 'Category fact preservation'), (difficulty, 'Difficulty fact preservation')]:\n    subset = frame[frame['metric'].eq('fact_preservation')].pivot(index=frame.columns[0], columns='condition', values='mean')\n    subset.plot(kind='bar', figsize=(12,5), title=title)\n    plt.xticks(rotation=60, ha='right'); plt.tight_layout(); plt.show()"),
+md('## Interpretation and limitations\n\n`fact_preservation` and `answer_required_fact_coverage` are higher-is-better measures. `stale_fact_error_rate` and `contradiction_rate` are lower-is-better error measures. The implementation uses exact strings and set comparisons, so paraphrases may score as misses. BM25 source retrieval is lexical, not semantic. Zero stale-fact or contradiction error does not establish complete correctness. This is one local run using two models in one Ollama environment, so it does not establish generalization or independent replication. Gold fields in the JSONL are evaluator-only and must not be sent to evaluated models.'),
+md('## Reproducibility note\n\nAll tables above are loaded from the published package; no inference or network access is performed by this notebook.')
+],'metadata':{'kernelspec':{'display_name':'Python 3','language':'python','name':'python3'},'language_info':{'name':'python','version':'3.x'}},'nbformat':4,'nbformat_minor':5}
+(root/'continuitybench_analysis.ipynb').write_text(json.dumps(nb,indent=2),encoding='utf8')

@@ -1,0 +1,20 @@
+{
+  "package_type": "temporary_kaggle_upload",
+  "case_count": 84,
+  "dataset_source": "data\\generated\\continuitybench_v1.jsonl",
+  "result_source": "reports\\generated\\current\\analysis_20261021\\per_case_analysis.csv",
+  "diagnostic_manifest_excluded": true,
+  "license_status": "Unresolved; owner confirmation is provenance evidence, not independent legal clearance. Root MIT license is not assumed to cover dataset, gold labels, reviews, or generated outputs.",
+  "owner_provided_provenance": {
+    "statement": "Owner confirms all 84 benchmark conversations were generated specifically for ContinuityBench using ChatGPT/Codex and manually reviewed by the owner; to the owners knowledge, no third-party conversations or copied external material were used.",
+    "basis": "Owner-provided confirmation; not independently verified.",
+    "synthetic_provenance_and_non_confidentiality": "Requires owner confirmation and is not independently verified."
+  },
+  "human_review_status": "Owner reports all 84 cases manually reviewed; review history is excluded from the minimal public package.",
+  "license_file_required_blocker": true,
+  "publication_blockers": [
+    "Owner must select and authorize an applicable public license before upload.",
+    "Owner must confirm redistribution permission for dataset, gold labels, human-review artifacts, and generated model outputs.",
+    "Check applicable model/provider terms for included generated outputs; no complete local terms were found."
+  ]
+}

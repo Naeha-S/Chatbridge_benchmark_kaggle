@@ -14,7 +14,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", required=True, help="Path for JSONL output")
     parser.add_argument("--count", type=int, default=84, help="Number of cases")
     parser.add_argument("--seed", type=int, default=7, help="Random seed")
-    parser.add_argument("--qa-output", default="reports/generated/qa_report.json", help="Path for QA report JSON")
+    parser.add_argument("--qa-output", default="reports/generated/current/qa_report.json", help="Path for QA report JSON")
     return parser.parse_args()
 
 
@@ -52,3 +52,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
